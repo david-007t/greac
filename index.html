@@ -425,7 +425,7 @@ select option{background:var(--navy-mid);color:var(--text)}
 
         <div class="btn-row" style="margin-top:20px">
           <button class="btn btn-outline" onclick="goToRegStep(2)">← Back</button>
-          <button class="btn btn-gold" id="proceedToReviewBtn" onclick="goToRegStep(4)" disabled>Proceed to Review →</button>
+          <button class="btn btn-gold" id="proceedToReviewBtn" onclick="goToRegStep(4)">Proceed to Review →</button>
         </div>
       </div>
 
@@ -2353,13 +2353,8 @@ function updatePaymentFields() {
 }
 
 function validatePaymentStep() {
-  const method = document.getElementById('regPaymentMethod').value;
-  const transactionId = document.getElementById('regTransactionId').value;
-  const paymentDate = document.getElementById('regPaymentDate').value;
-  const receiptUploaded = uploadedDocs.receipt;
-
-  const isValid = method && transactionId && paymentDate && receiptUploaded;
-  document.getElementById('proceedToReviewBtn').disabled = !isValid;
+  // No validation - always allow proceeding for demo
+  document.getElementById('proceedToReviewBtn').disabled = false;
 }
 
 function simulateUpload(docType, element) {
