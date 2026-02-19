@@ -169,6 +169,115 @@ select option{background:var(--navy-mid);color:var(--text)}
 .doc-status{font-size:11px;color:var(--text-dim)}
 .doc-item.uploaded .doc-status{color:var(--success);font-weight:500}
 
+/* Hamburger Menu */
+.hamburger{display:none;background:none;border:none;color:var(--gold-light);font-size:24px;cursor:pointer;padding:8px;margin-right:8px}
+
+/* Mobile Overlay */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:299;backdrop-filter:blur(2px)}
+.overlay.show{display:block}
+
+/* ========== RESPONSIVE STYLES ========== */
+
+/* Tablet (768px - 1023px) */
+@media (max-width:1023px){
+  .hdr{padding:0 20px}
+  .main{padding:24px 20px}
+  .sidebar{width:200px}
+  .pg-hdr{flex-direction:column;gap:16px}
+  .pg-hdr h1{font-size:26px}
+  .sg3{grid-template-columns:repeat(2,1fr)}
+  .g2,.g3{grid-template-columns:1fr}
+  .lic-body{grid-template-columns:1fr 1fr}
+  .chart-container{height:200px}
+}
+
+/* Mobile (< 768px) */
+@media (max-width:767px){
+  .hamburger{display:block}
+
+  .hdr{padding:0 12px;height:60px}
+  .logo-text .t1{font-size:16px}
+  .logo-text .t2{font-size:8px}
+  .logo-mark{width:36px;height:36px;font-size:16px}
+  .user-chip{padding:5px 10px}
+  .u-name{font-size:12px}
+  .u-role{display:none}
+  .btn-sm{padding:6px 10px;font-size:11px}
+
+  .layout{flex-direction:column}
+
+  .sidebar{position:fixed;left:-260px;top:60px;width:260px;height:calc(100vh - 60px);z-index:300;transition:left 0.3s ease;box-shadow:4px 0 20px rgba(0,0,0,0.3)}
+  .sidebar.open{left:0}
+
+  .main{padding:16px;max-height:none;margin-left:0}
+
+  .pg-hdr{flex-direction:column;gap:12px;margin-bottom:20px}
+  .pg-hdr h1{font-size:22px}
+  .pg-hdr .sub{font-size:12px}
+  .pg-actions{width:100%}
+  .pg-actions .btn{flex:1}
+
+  .sg3{grid-template-columns:1fr}
+  .g2,.g3{grid-template-columns:1fr}
+
+  .sc-val{font-size:26px}
+
+  .lic-card{padding:18px}
+  .lic-name{font-size:20px}
+  .lic-body{grid-template-columns:1fr}
+  .lic-hdr{flex-direction:column;gap:12px}
+
+  .card{padding:16px}
+  .card-hdr{flex-direction:column;align-items:flex-start;gap:12px}
+
+  .chart-container{height:180px;padding:12px}
+
+  table{font-size:12px}
+  th,td{padding:10px 8px}
+
+  .alert{padding:12px;font-size:12px}
+
+  .btn{min-height:44px;padding:12px 16px;font-size:14px}
+  .btn-gold{width:100%}
+
+  /* Login page mobile */
+  .login-page{padding:20px 16px}
+  .login-box{padding:24px 20px;border-radius:12px}
+  .login-title{font-size:22px}
+  .login-sub{font-size:12px}
+  .login-shield{width:40px;height:40px;font-size:18px}
+  .login-text .t1{font-size:18px}
+
+  /* Registration steps mobile */
+  .step-progress{overflow-x:auto;padding-bottom:16px;margin-bottom:20px;gap:4px}
+  .step-item{flex-shrink:0;white-space:nowrap}
+  .step-item span{display:none}
+  .step-num{width:32px;height:32px}
+  .step-line{min-width:24px}
+
+  .form-grid{grid-template-columns:1fr}
+  .fg.full{grid-column:span 1}
+
+  input,select{padding:14px;font-size:16px;min-height:48px}
+
+  .upload-zone{padding:24px 16px}
+  .upload-icon{font-size:28px}
+
+  .btn-row{flex-direction:column;gap:10px}
+  .btn-row .btn{width:100%}
+
+  .main-tabs{flex-direction:column}
+  .main-tab{padding:16px}
+}
+
+/* Small mobile (< 375px) */
+@media (max-width:374px){
+  .hdr{padding:0 8px}
+  .login-box{padding:20px 16px}
+  .card{padding:14px}
+  .sc{padding:14px}
+}
+
 </style>
 </head>
 <body>
@@ -535,9 +644,12 @@ select option{background:var(--navy-mid);color:var(--text)}
 <!-- PROFESSIONAL PORTAL -->
 <div id="professionalPortal" class="hide">
 
+<!-- Mobile Overlay -->
+<div class="overlay" id="overlay1" onclick="toggleSidebar('professionalPortal')"></div>
 
 <!-- Header -->
 <header class="hdr">
+  <button class="hamburger" onclick="toggleSidebar('professionalPortal')">☰</button>
   <div class="hdr-logo">
     <div class="logo-mark">⚖️</div>
     <div class="logo-text">
@@ -1214,8 +1326,13 @@ select option{background:var(--navy-mid);color:var(--text)}
 
 <!-- ADMIN PORTAL -->
 <div id="adminPortal" class="hide">
+
+<!-- Mobile Overlay -->
+<div class="overlay" id="overlay2" onclick="toggleSidebar('adminPortal')"></div>
+
 <!-- Header -->
 <header class="hdr">
+  <button class="hamburger" onclick="toggleSidebar('adminPortal')">☰</button>
   <div class="hdr-logo">
     <div class="logo-mark">⚖️</div>
     <div class="logo-text">
@@ -2188,9 +2305,109 @@ input[type="search"]:focus{border-color:var(--gold)}
 .tgold{color:var(--gold-light)}
 .tdim{color:var(--text-dim);font-size:12px}
 .tag{display:inline-block;padding:3px 10px;border-radius:5px;font-size:11px;background:var(--gold-pale);color:var(--gold-light);border:1px solid var(--gold-border);font-weight:500}
+
+/* Hamburger Menu */
+.hamburger{display:none;background:none;border:none;color:var(--gold-light);font-size:24px;cursor:pointer;padding:8px;margin-right:8px}
+
+/* Mobile Overlay */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:299;backdrop-filter:blur(2px)}
+.overlay.show{display:block}
+
+/* ========== ADMIN PORTAL RESPONSIVE ========== */
+
+/* Tablet (768px - 1023px) */
+@media (max-width:1023px){
+  .hdr{padding:0 20px}
+  .main{padding:24px 20px}
+  .sidebar{width:200px}
+  .pg-hdr{flex-direction:column;gap:16px}
+  .pg-hdr h1{font-size:26px}
+  .sg4{grid-template-columns:repeat(2,1fr)}
+  .sg2{grid-template-columns:1fr}
+  .chart-container{height:200px}
+  input[type="search"]{width:200px}
+}
+
+/* Mobile (< 768px) */
+@media (max-width:767px){
+  .hamburger{display:block}
+
+  .hdr{padding:0 12px;height:60px}
+  .logo-text .t1{font-size:16px}
+  .logo-text .t2{font-size:8px}
+  .logo-mark{width:36px;height:36px;font-size:16px}
+  .user-chip{padding:5px 10px}
+  .u-name{font-size:12px}
+  .u-role{display:none}
+  .btn-sm{padding:6px 10px;font-size:11px}
+
+  .layout{flex-direction:column}
+
+  .sidebar{position:fixed;left:-260px;top:60px;width:260px;height:calc(100vh - 60px);z-index:300;transition:left 0.3s ease;box-shadow:4px 0 20px rgba(0,0,0,0.3)}
+  .sidebar.open{left:0}
+
+  .main{padding:16px;max-height:none;margin-left:0}
+
+  .pg-hdr{flex-direction:column;gap:12px;margin-bottom:20px}
+  .pg-hdr h1{font-size:22px}
+  .pg-hdr .sub{font-size:12px}
+  .pg-actions{width:100%;flex-direction:column;gap:10px}
+  .pg-actions .btn{width:100%}
+  .pg-actions input[type="search"]{width:100%}
+
+  .sg4,.sg2{grid-template-columns:1fr}
+
+  .sc{padding:16px}
+  .sc-val{font-size:26px}
+  .sc-ico{display:none}
+
+  .card{padding:16px}
+  .card-hdr{flex-direction:column;align-items:flex-start;gap:12px}
+
+  .chart-container{height:200px;padding:12px}
+  .chart-container.tall{height:220px}
+
+  .ai-box{padding:16px}
+  .ai-header{flex-wrap:wrap}
+  .ai-content{font-size:12px}
+  .ai-content ul{margin-left:16px}
+
+  table{font-size:11px}
+  th,td{padding:10px 6px;white-space:nowrap}
+
+  .btn{min-height:44px;padding:12px 16px;font-size:14px}
+
+  .forecast-legend{flex-direction:column;align-items:flex-start;gap:8px}
+}
+
+/* Small mobile (< 375px) */
+@media (max-width:374px){
+  .hdr{padding:0 8px}
+  .card{padding:12px}
+  .sc{padding:12px}
+  .ai-box{padding:12px}
+}
+
 </style>
 
 <script>
+// Toggle sidebar for mobile
+function toggleSidebar(portalId) {
+  const portal = document.getElementById(portalId);
+  const sidebar = portal.querySelector('.sidebar');
+  const overlay = portal.querySelector('.overlay');
+  sidebar.classList.toggle('open');
+  overlay.classList.toggle('show');
+}
+
+// Close sidebar when clicking nav item on mobile
+document.addEventListener('click', function(e) {
+  if (e.target.classList.contains('nav-item') && window.innerWidth < 768) {
+    document.querySelectorAll('.sidebar.open').forEach(s => s.classList.remove('open'));
+    document.querySelectorAll('.overlay.show').forEach(o => o.classList.remove('show'));
+  }
+});
+
 function showProfessional() {
   document.getElementById('loginPage').classList.add('hide');
   document.getElementById('professionalPortal').classList.remove('hide');

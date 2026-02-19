@@ -206,12 +206,118 @@ textarea{min-height:100px;resize:vertical}
 /* Disabled row for unpaid */
 tr.unpaid{opacity:0.6}
 tr.unpaid td{background:rgba(230,126,34,0.03)}
+
+/* Hamburger Menu */
+.hamburger{display:none;background:none;border:none;color:var(--gold-light);font-size:24px;cursor:pointer;padding:8px;margin-right:8px}
+
+/* Mobile Overlay */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:299;backdrop-filter:blur(2px)}
+.overlay.show{display:block}
+
+/* ========== RESPONSIVE STYLES ========== */
+
+/* Tablet (768px - 1023px) */
+@media (max-width:1023px){
+  .hdr{padding:0 20px}
+  .main{padding:24px 20px}
+  .sidebar{width:200px}
+  .pg-hdr{flex-direction:column;gap:16px}
+  .pg-hdr h1{font-size:26px}
+  .sg4{grid-template-columns:repeat(2,1fr)}
+  .sg2,.ai-charts{grid-template-columns:1fr}
+  .ai-grid{grid-template-columns:repeat(2,1fr)}
+  .workflow-steps{flex-wrap:wrap;gap:8px}
+  .wf-line{min-width:10px}
+  .form-grid{grid-template-columns:1fr}
+  .fg.full{grid-column:span 1}
+}
+
+/* Mobile (< 768px) */
+@media (max-width:767px){
+  .hamburger{display:block}
+
+  .hdr{padding:0 12px;height:60px}
+  .logo-text .t1{font-size:16px}
+  .logo-text .t2{font-size:8px}
+  .logo-mark{width:36px;height:36px;font-size:16px}
+  .user-chip{padding:5px 10px}
+  .u-name{font-size:12px}
+  .u-role{display:none}
+  .btn-sm{padding:6px 10px;font-size:11px}
+
+  .layout{flex-direction:column}
+
+  .sidebar{position:fixed;left:-260px;top:60px;width:260px;height:calc(100vh - 60px);z-index:300;transition:left 0.3s ease;box-shadow:4px 0 20px rgba(0,0,0,0.3)}
+  .sidebar.open{left:0}
+
+  .main{padding:16px;max-height:none;margin-left:0}
+
+  .pg-hdr{flex-direction:column;gap:12px;margin-bottom:20px}
+  .pg-hdr h1{font-size:22px}
+  .pg-hdr .sub{font-size:12px}
+  .pg-actions{width:100%;flex-direction:column;gap:10px}
+  .pg-actions .btn{width:100%}
+
+  .sg4,.sg2{grid-template-columns:1fr}
+
+  .sc{padding:16px}
+  .sc-val{font-size:26px}
+  .sc-ico{display:none}
+
+  .card{padding:16px}
+  .card-hdr{flex-direction:column;align-items:flex-start;gap:12px}
+
+  .ai-insights{padding:14px}
+  .ai-grid{grid-template-columns:1fr 1fr}
+  .ai-insight{padding:12px}
+  .ai-insight-value{font-size:18px}
+  .ai-charts{grid-template-columns:1fr}
+  .ai-chart-card{padding:12px}
+  .ai-chart-container{height:140px}
+
+  .workflow-steps{flex-wrap:wrap;padding:12px;gap:6px}
+  .wf-step{font-size:11px}
+  .wf-step-num{width:24px;height:24px;font-size:10px}
+  .wf-line{min-width:12px}
+  .wf-step span:not(.wf-step-num){display:none}
+
+  table{font-size:11px}
+  th,td{padding:10px 6px;white-space:nowrap}
+
+  .modal{padding:20px;max-width:100%;margin:10px;border-radius:12px}
+  .modal-title{font-size:18px}
+  .form-grid{grid-template-columns:1fr}
+  .fg.full{grid-column:span 1}
+  input,select,textarea{padding:14px;font-size:16px;min-height:48px}
+
+  .steps{overflow-x:auto;padding-bottom:8px}
+  .step span:not(.step-num){display:none}
+
+  .btn{min-height:44px;padding:12px 16px;font-size:14px}
+
+  .pay-grid{grid-template-columns:1fr}
+  .pay-info{padding:12px}
+}
+
+/* Small mobile (< 375px) */
+@media (max-width:374px){
+  .hdr{padding:0 8px}
+  .card{padding:12px}
+  .sc{padding:12px}
+  .ai-insights{padding:10px}
+  .ai-grid{grid-template-columns:1fr}
+}
+
 </style>
 </head>
 <body>
 
+<!-- Mobile Overlay -->
+<div class="overlay" onclick="toggleSidebar()"></div>
+
 <!-- Header -->
 <header class="hdr">
+  <button class="hamburger" onclick="toggleSidebar()">☰</button>
   <div class="hdr-logo">
     <div class="logo-mark">⚖️</div>
     <div class="logo-text">
@@ -1185,6 +1291,20 @@ tr.unpaid td{background:rgba(230,126,34,0.03)}
 </div>
 
 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+// Toggle sidebar for mobile
+function toggleSidebar() {
+  document.querySelector('.sidebar').classList.toggle('open');
+  document.querySelector('.overlay').classList.toggle('show');
+}
+
+// Close sidebar when clicking nav item on mobile
+document.addEventListener('click', function(e) {
+  if (e.target.classList.contains('nav-item') && window.innerWidth < 768) {
+    document.querySelector('.sidebar').classList.remove('open');
+    document.querySelector('.overlay').classList.remove('show');
+  }
+});
+
 let currentSection = 3;
 
 function showScreen(screenId) {
