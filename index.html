@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>REAC Portal - Step 1</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
 
 :root{--navy:#0b1931;--navy-mid:#0f2347;--navy-card:#142a55;--navy-light:#1a3468;--gold:#d4a017;--gold-light:#f0c040;--gold-pale:rgba(212,160,23,0.12);--gold-border:rgba(212,160,23,0.3);--text:#dce8f5;--text-dim:#6b8db5;--success:#27ae60;--warning:#e67e22;--danger:#e74c3c;--border:rgba(255,255,255,0.07);--shadow:0 6px 28px rgba(0,0,0,0.4)}
@@ -1247,9 +1248,7 @@ select option{background:var(--navy-mid);color:var(--text)}
             <div class="card-title">License Registrations Trend</div>
           </div>
           <div class="chart-container">
-            📊 Chart: Monthly registrations (Jan-Dec 2025)<br/>
-            Agents: 52% | Brokers: 30% | Firms: 18%<br/>
-            Peak: August (94 new licenses)
+            <canvas id="registrationsTrendChart"></canvas>
           </div>
         </div>
         
@@ -1258,10 +1257,7 @@ select option{background:var(--navy-mid);color:var(--text)}
             <div class="card-title">Revenue by Category</div>
           </div>
           <div class="chart-container">
-            💰 Chart: Revenue breakdown YTD<br/>
-            Agent Licenses: ₵1.2M (50%)<br/>
-            Broker Licenses: ₵780K (32.5%)<br/>
-            Firm Licenses: ₵420K (17.5%)
+            <canvas id="revenueCategoryChart"></canvas>
           </div>
         </div>
       </div>
@@ -1389,10 +1385,7 @@ select option{background:var(--navy-mid);color:var(--text)}
             <div class="card-title">Monthly Revenue Trend</div>
           </div>
           <div class="chart-container">
-            📈 Chart: Revenue by month (2025-2026)<br/>
-            Average: ₵200K/month<br/>
-            Peak: March (renewals) ₵580K<br/>
-            Growth rate: +15% YoY
+            <canvas id="monthlyRevenueChart"></canvas>
           </div>
         </div>
         
@@ -1719,10 +1712,7 @@ select option{background:var(--navy-mid);color:var(--text)}
             <div class="card-title">Property Type Distribution</div>
           </div>
           <div class="chart-container">
-            🏘️ Chart: Transaction breakdown by type<br/>
-            Residential: 68% (328 sales)<br/>
-            Commercial: 22% (106 sales)<br/>
-            Land: 10% (48 sales)
+            <canvas id="propertyTypeChart"></canvas>
           </div>
         </div>
       </div>
@@ -2007,7 +1997,8 @@ body{font-family:'Outfit',sans-serif;background:var(--navy);color:var(--text);mi
 .ai-content li{margin:6px 0}
 
 /* Charts */
-.chart-container{height:240px;background:rgba(255,255,255,0.02);border-radius:10px;padding:16px;display:flex;align-items:center;justify-content:center;color:var(--text-dim);font-size:13px}
+.chart-container{height:240px;background:rgba(255,255,255,0.02);border-radius:10px;padding:16px;position:relative}
+.chart-container canvas{max-height:100%}
 
 /* Buttons */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:11px 20px;border-radius:8px;border:none;font-family:'Outfit',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:all 0.2s}
@@ -2271,6 +2262,213 @@ function showScreen(screenId) {
   document.querySelectorAll('.screen').forEach(screen => screen.classList.remove('active'));
   document.getElementById('screen-' + screenId).classList.add('active');
 }
+
+// Chart.js initialization
+document.addEventListener('DOMContentLoaded', function() {
+  // Common chart options
+  Chart.defaults.color = '#6b8db5';
+  Chart.defaults.borderColor = 'rgba(255,255,255,0.07)';
+
+  const goldColor = '#d4a017';
+  const goldLight = '#f0c040';
+  const navyCard = '#142a55';
+
+  // 1. License Registrations Trend (Line Chart)
+  const regCtx = document.getElementById('registrationsTrendChart');
+  if (regCtx) {
+    new Chart(regCtx, {
+      type: 'line',
+      data: {
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+        datasets: [{
+          label: 'Registrations',
+          data: [52, 58, 64, 71, 76, 82, 88, 94, 85, 79, 83, 89],
+          borderColor: goldColor,
+          backgroundColor: 'rgba(212,160,23,0.1)',
+          fill: true,
+          tension: 0.4,
+          pointBackgroundColor: goldLight,
+          pointBorderColor: goldColor,
+          pointRadius: 4,
+          pointHoverRadius: 6
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: navyCard,
+            titleColor: '#fff',
+            bodyColor: '#dce8f5',
+            borderColor: goldColor,
+            borderWidth: 1
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: false,
+            min: 40,
+            grid: { color: 'rgba(255,255,255,0.05)' }
+          },
+          x: {
+            grid: { display: false }
+          }
+        }
+      }
+    });
+  }
+
+  // 2. Revenue by Category (Doughnut Chart)
+  const revCatCtx = document.getElementById('revenueCategoryChart');
+  if (revCatCtx) {
+    new Chart(revCatCtx, {
+      type: 'doughnut',
+      data: {
+        labels: ['Agent Licenses', 'Broker Licenses', 'Firm Licenses'],
+        datasets: [{
+          data: [50, 32.5, 17.5],
+          backgroundColor: [goldColor, '#27ae60', '#3498db'],
+          borderColor: navyCard,
+          borderWidth: 3,
+          hoverOffset: 8
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        cutout: '60%',
+        plugins: {
+          legend: {
+            position: 'right',
+            labels: {
+              padding: 15,
+              usePointStyle: true,
+              pointStyle: 'circle',
+              font: { size: 11 }
+            }
+          },
+          tooltip: {
+            backgroundColor: navyCard,
+            titleColor: '#fff',
+            bodyColor: '#dce8f5',
+            borderColor: goldColor,
+            borderWidth: 1,
+            callbacks: {
+              label: function(ctx) {
+                return ctx.label + ': ' + ctx.raw + '%';
+              }
+            }
+          }
+        }
+      }
+    });
+  }
+
+  // 3. Monthly Revenue Trend (Line Chart)
+  const monthRevCtx = document.getElementById('monthlyRevenueChart');
+  if (monthRevCtx) {
+    new Chart(monthRevCtx, {
+      type: 'line',
+      data: {
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+        datasets: [{
+          label: 'Revenue (₵K)',
+          data: [180, 195, 580, 220, 210, 240, 255, 230, 245, 260, 275, 310],
+          borderColor: '#27ae60',
+          backgroundColor: 'rgba(39,174,96,0.1)',
+          fill: true,
+          tension: 0.4,
+          pointBackgroundColor: '#2ecc71',
+          pointBorderColor: '#27ae60',
+          pointRadius: 4,
+          pointHoverRadius: 6
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: navyCard,
+            titleColor: '#fff',
+            bodyColor: '#dce8f5',
+            borderColor: '#27ae60',
+            borderWidth: 1,
+            callbacks: {
+              label: function(ctx) {
+                return '₵' + ctx.raw + 'K';
+              }
+            }
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: false,
+            min: 100,
+            grid: { color: 'rgba(255,255,255,0.05)' },
+            ticks: {
+              callback: function(value) {
+                return '₵' + value + 'K';
+              }
+            }
+          },
+          x: {
+            grid: { display: false }
+          }
+        }
+      }
+    });
+  }
+
+  // 4. Property Type Distribution (Doughnut Chart)
+  const propTypeCtx = document.getElementById('propertyTypeChart');
+  if (propTypeCtx) {
+    new Chart(propTypeCtx, {
+      type: 'doughnut',
+      data: {
+        labels: ['Residential (328)', 'Commercial (106)', 'Land (48)'],
+        datasets: [{
+          data: [68, 22, 10],
+          backgroundColor: [goldColor, '#9b59b6', '#e67e22'],
+          borderColor: navyCard,
+          borderWidth: 3,
+          hoverOffset: 8
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        cutout: '60%',
+        plugins: {
+          legend: {
+            position: 'right',
+            labels: {
+              padding: 15,
+              usePointStyle: true,
+              pointStyle: 'circle',
+              font: { size: 11 }
+            }
+          },
+          tooltip: {
+            backgroundColor: navyCard,
+            titleColor: '#fff',
+            bodyColor: '#dce8f5',
+            borderColor: goldColor,
+            borderWidth: 1,
+            callbacks: {
+              label: function(ctx) {
+                return ctx.label + ': ' + ctx.raw + '%';
+              }
+            }
+          }
+        }
+      }
+    });
+  }
+});
 
 </script>
 
