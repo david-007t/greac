@@ -172,6 +172,40 @@ textarea{min-height:100px;resize:vertical}
 
 /* Grid layouts */
 .sg2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
+
+/* Payment Workflow */
+.workflow-steps{display:flex;align-items:center;background:var(--navy-card);border:1px solid var(--border);border-radius:10px;padding:16px 20px;margin-bottom:20px;gap:0}
+.wf-step{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text-dim);white-space:nowrap}
+.wf-step-num{width:28px;height:28px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;background:var(--navy)}
+.wf-step.done .wf-step-num{background:var(--success);border-color:var(--success);color:#fff}
+.wf-step.active .wf-step-num{background:var(--gold);border-color:var(--gold);color:var(--navy)}
+.wf-step.done,.wf-step.active{color:var(--text);font-weight:500}
+.wf-line{flex:1;height:2px;background:var(--border);margin:0 8px;min-width:20px}
+.wf-line.done{background:var(--success)}
+
+/* Payment Badges */
+.pay-badge{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:20px;font-size:10px;font-weight:600}
+.pay-badge.paid{background:rgba(39,174,96,0.14);color:var(--success)}
+.pay-badge.paid::before{content:'✅'}
+.pay-badge.pending{background:rgba(230,126,34,0.15);color:var(--warning)}
+.pay-badge.pending::before{content:'⏳'}
+.pay-badge.failed{background:rgba(231,76,60,0.14);color:var(--danger)}
+.pay-badge.failed::before{content:'❌'}
+
+/* Payment Info Card */
+.pay-info{background:linear-gradient(135deg,rgba(39,174,96,0.08),rgba(46,204,113,0.08));border:1px solid rgba(39,174,96,0.25);border-radius:10px;padding:16px;margin-bottom:16px}
+.pay-info.pending{background:linear-gradient(135deg,rgba(230,126,34,0.08),rgba(243,156,18,0.08));border-color:rgba(230,126,34,0.25)}
+.pay-info-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,0.06)}
+.pay-info-title{font-size:14px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:8px}
+.pay-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.pay-item{font-size:12px}
+.pay-item-label{color:var(--text-dim);margin-bottom:3px;font-size:10px;text-transform:uppercase;letter-spacing:0.05em}
+.pay-item-value{color:var(--text);font-weight:500}
+.pay-amount{font-size:22px;font-weight:700;color:var(--success)}
+
+/* Disabled row for unpaid */
+tr.unpaid{opacity:0.6}
+tr.unpaid td{background:rgba(230,126,34,0.03)}
 </style>
 </head>
 <body>
@@ -211,6 +245,13 @@ textarea{min-height:100px;resize:vertical}
       </div>
     </div>
     <div class="sb-section">
+      <div class="sb-lbl">Payments</div>
+      <div class="nav-item" onclick="showScreen('payments')">
+        <span class="nav-icon">💳</span>Payment Verification
+        <span class="nav-badge" style="background:var(--warning)">3</span>
+      </div>
+    </div>
+    <div class="sb-section">
       <div class="sb-lbl">Inspections</div>
       <div class="nav-item" onclick="showScreen('inspection')">
         <span class="nav-icon">🏢</span>Office Inspection
@@ -240,26 +281,54 @@ textarea{min-height:100px;resize:vertical}
         </div>
         <button class="btn btn-gold btn-sm">+ New Application</button>
       </div>
-      
+
+      <!-- Workflow Steps Indicator -->
+      <div class="workflow-steps">
+        <div class="wf-step done">
+          <div class="wf-step-num">✓</div>
+          <span>Application Created</span>
+        </div>
+        <div class="wf-line done"></div>
+        <div class="wf-step done">
+          <div class="wf-step-num">✓</div>
+          <span>Payment</span>
+        </div>
+        <div class="wf-line done"></div>
+        <div class="wf-step active">
+          <div class="wf-step-num">3</div>
+          <span>Verification</span>
+        </div>
+        <div class="wf-line"></div>
+        <div class="wf-step">
+          <div class="wf-step-num">4</div>
+          <span>Review</span>
+        </div>
+        <div class="wf-line"></div>
+        <div class="wf-step">
+          <div class="wf-step-num">5</div>
+          <span>Decision</span>
+        </div>
+      </div>
+
       <!-- Queue Stats -->
       <div class="sg4">
         <div class="sc">
           <div class="sc-lbl">Pending Review</div>
-          <div class="sc-val">12</div>
-          <div class="sc-sub">Awaiting action</div>
+          <div class="sc-val">9</div>
+          <div class="sc-sub">Payment verified</div>
           <div class="sc-ico">📋</div>
+        </div>
+        <div class="sc warn">
+          <div class="sc-lbl">Payment Pending</div>
+          <div class="sc-val">3</div>
+          <div class="sc-sub">Awaiting payment</div>
+          <div class="sc-ico">💳</div>
         </div>
         <div class="sc green">
           <div class="sc-lbl">Approved Today</div>
           <div class="sc-val">5</div>
           <div class="sc-sub">Licenses issued</div>
           <div class="sc-ico">✅</div>
-        </div>
-        <div class="sc warn">
-          <div class="sc-lbl">Incomplete</div>
-          <div class="sc-val">3</div>
-          <div class="sc-sub">Missing docs</div>
-          <div class="sc-ico">⚠️</div>
         </div>
         <div class="sc danger">
           <div class="sc-lbl">Rejected</div>
@@ -281,23 +350,23 @@ textarea{min-height:100px;resize:vertical}
         <div class="ai-grid">
           <div class="ai-insight success">
             <div class="ai-insight-icon">✅</div>
-            <div class="ai-insight-value">3 Applications</div>
-            <div class="ai-insight-label">High approval likelihood (>85% confidence)</div>
+            <div class="ai-insight-value">9 Paid</div>
+            <div class="ai-insight-label">Ready for review (payment verified)</div>
           </div>
           <div class="ai-insight warning">
-            <div class="ai-insight-icon">⚠️</div>
-            <div class="ai-insight-value">2 At Risk</div>
-            <div class="ai-insight-label">Missing critical documents detected</div>
+            <div class="ai-insight-icon">💳</div>
+            <div class="ai-insight-value">3 Pending</div>
+            <div class="ai-insight-label">AI predicts payment within 24hrs</div>
           </div>
           <div class="ai-insight info">
             <div class="ai-insight-icon">⏱️</div>
-            <div class="ai-insight-value">4.2 Days</div>
-            <div class="ai-insight-label">Predicted avg. processing time</div>
+            <div class="ai-insight-value">2.4 hrs</div>
+            <div class="ai-insight-label">Avg. payment completion time</div>
           </div>
           <div class="ai-insight">
             <div class="ai-insight-icon">🎯</div>
-            <div class="ai-insight-value">Priority Queue</div>
-            <div class="ai-insight-label">#2026-089, #2026-091 for fastest turnaround</div>
+            <div class="ai-insight-value">₵5,400</div>
+            <div class="ai-insight-label">Expected revenue from pending payments</div>
           </div>
         </div>
         <div class="ai-charts">
@@ -328,7 +397,7 @@ textarea{min-height:100px;resize:vertical}
                 <th>Ref #</th>
                 <th>Applicant</th>
                 <th>Type</th>
-                <th>Applied</th>
+                <th>Payment</th>
                 <th>Documents</th>
                 <th>Status</th>
                 <th>Action</th>
@@ -337,110 +406,110 @@ textarea{min-height:100px;resize:vertical}
             <tbody>
               <tr>
                 <td class="tdim">#2026-089</td>
-                <td><strong>Kofi Asante</strong><br/><span class="tdim"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="9ff4f0f9f6dff8f2fef6f3b1fcf0f2">[email&#160;protected]</a></span></td>
-                <td><span class="tag">Agent</span></td>
-                <td>Feb 10</td>
+                <td><strong>Kofi Asante</strong><br/><span class="tdim">kofi@gmail.com</span></td>
+                <td><span class="tag">Agent</span><br/><span class="tdim">₵450</span></td>
+                <td><span class="pay-badge paid">Paid</span><br/><span class="tdim">PAY-089</span></td>
                 <td style="color:var(--success)">7/7 ✓</td>
-                <td><span class="badge b-green">Ready</span><span class="ai-pred high">92% Approve</span></td>
+                <td><span class="badge b-green">Ready</span><span class="ai-pred high">92%</span></td>
                 <td><button class="btn btn-outline btn-sm" onclick="showScreen('review')">Review</button></td>
               </tr>
-              <tr>
+              <tr class="unpaid">
                 <td class="tdim">#2026-090</td>
-                <td><strong>Ama Darko</strong><br/><span class="tdim"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="51303c30112830393e3e7f323e3c">[email&#160;protected]</a></span></td>
-                <td><span class="tag">Broker</span></td>
-                <td>Feb 12</td>
+                <td><strong>Ama Darko</strong><br/><span class="tdim">ama@broker.gh</span></td>
+                <td><span class="tag">Broker</span><br/><span class="tdim">₵800</span></td>
+                <td><span class="pay-badge pending">Pending</span><br/><span class="ai-pred medium" style="margin:0;margin-top:4px">~2hrs</span></td>
                 <td style="color:var(--warning)">6/7 ⚠</td>
-                <td><span class="badge b-yellow">Incomplete</span><span class="ai-pred medium">Needs Docs</span></td>
-                <td><button class="btn btn-sm" style="background:rgba(255,255,255,0.04);color:var(--text-dim)">Request Doc</button></td>
+                <td><span class="badge b-yellow">Awaiting Payment</span></td>
+                <td><button class="btn btn-sm" style="background:rgba(255,255,255,0.04);color:var(--text-dim)" onclick="openPaymentModal()">Verify</button></td>
               </tr>
               <tr>
                 <td class="tdim">#2026-091</td>
-                <td><strong>Prestige Homes Ltd</strong><br/><span class="tdim"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="61080f070e211113041215080604090e0c04124f0609">[email&#160;protected]</a></span></td>
-                <td><span class="tag">Firm</span></td>
-                <td>Feb 13</td>
+                <td><strong>Prestige Homes Ltd</strong><br/><span class="tdim">info@prestige.gh</span></td>
+                <td><span class="tag">Firm</span><br/><span class="tdim">₵2,500</span></td>
+                <td><span class="pay-badge paid">Paid</span><br/><span class="tdim">PAY-091</span></td>
                 <td style="color:var(--success)">7/7 ✓</td>
-                <td><span class="badge b-yellow">Needs Inspection</span><span class="ai-pred high">87% Approve</span></td>
+                <td><span class="badge b-yellow">Needs Inspection</span><span class="ai-pred high">87%</span></td>
                 <td><button class="btn btn-outline btn-sm" onclick="showScreen('schedule')">Schedule</button></td>
               </tr>
               <tr>
                 <td class="tdim">#2026-092</td>
-                <td><strong>Samuel Appiah</strong><br/><span class="tdim"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="e794868ac98697978e868fa7808a868e8bc984888a">[email&#160;protected]</a></span></td>
-                <td><span class="tag">Agent</span></td>
-                <td>Feb 14</td>
+                <td><strong>Samuel Appiah</strong><br/><span class="tdim">sam@realty.gh</span></td>
+                <td><span class="tag">Agent</span><br/><span class="tdim">₵450</span></td>
+                <td><span class="pay-badge paid">Paid</span><br/><span class="tdim">PAY-092</span></td>
                 <td style="color:var(--success)">7/7 ✓</td>
-                <td><span class="badge b-green">Ready</span><span class="ai-pred high">89% Approve</span></td>
+                <td><span class="badge b-green">Ready</span><span class="ai-pred high">89%</span></td>
                 <td><button class="btn btn-outline btn-sm">Review</button></td>
               </tr>
               <tr>
                 <td class="tdim">#2026-093</td>
-                <td><strong>Grace Owusu</strong><br/><span class="tdim"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="5532273436307b3a153a2021393a3a3e7b363a38">[email&#160;protected]</a></span></td>
-                <td><span class="tag">Broker</span></td>
-                <td>Feb 15</td>
+                <td><strong>Grace Owusu</strong><br/><span class="tdim">grace@homes.gh</span></td>
+                <td><span class="tag">Broker</span><br/><span class="tdim">₵800</span></td>
+                <td><span class="pay-badge paid">Paid</span><br/><span class="tdim">PAY-093</span></td>
                 <td style="color:var(--success)">7/7 ✓</td>
-                <td><span class="badge b-green">Ready</span><span class="ai-pred high">85% Approve</span></td>
+                <td><span class="badge b-green">Ready</span><span class="ai-pred high">85%</span></td>
                 <td><button class="btn btn-outline btn-sm">Review</button></td>
               </tr>
-              <tr>
+              <tr class="unpaid">
                 <td class="tdim">#2026-094</td>
-                <td><strong>Yaw Mensah</strong><br/><span class="tdim"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="215840560f4c61464c40484d0f424e4c">[email&#160;protected]</a></span></td>
-                <td><span class="tag">Agent</span></td>
-                <td>Feb 15</td>
+                <td><strong>Yaw Mensah</strong><br/><span class="tdim">yaw@mail.gh</span></td>
+                <td><span class="tag">Agent</span><br/><span class="tdim">₵450</span></td>
+                <td><span class="pay-badge pending">Pending</span><br/><span class="ai-pred medium" style="margin:0;margin-top:4px">~4hrs</span></td>
                 <td style="color:var(--warning)">6/7 ⚠</td>
-                <td><span class="badge b-yellow">Incomplete</span><span class="ai-pred medium">Needs Docs</span></td>
-                <td><button class="btn btn-sm" style="background:rgba(255,255,255,0.04);color:var(--text-dim)">Request Doc</button></td>
+                <td><span class="badge b-yellow">Awaiting Payment</span></td>
+                <td><button class="btn btn-sm" style="background:rgba(255,255,255,0.04);color:var(--text-dim)" onclick="openPaymentModal()">Verify</button></td>
               </tr>
               <tr>
                 <td class="tdim">#2026-095</td>
-                <td><strong>Gold Coast Realty</strong><br/><span class="tdim"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="a0c3cfced4c1c3d4e0c7cfccc4c3cfc1d3d48ec7c8">[email&#160;protected]</a></span></td>
-                <td><span class="tag">Firm</span></td>
-                <td>Feb 16</td>
+                <td><strong>Gold Coast Realty</strong><br/><span class="tdim">info@goldcoast.gh</span></td>
+                <td><span class="tag">Firm</span><br/><span class="tdim">₵2,500</span></td>
+                <td><span class="pay-badge paid">Paid</span><br/><span class="tdim">PAY-095</span></td>
                 <td style="color:var(--success)">7/7 ✓</td>
-                <td><span class="badge b-yellow">Needs Inspection</span><span class="ai-pred high">91% Approve</span></td>
+                <td><span class="badge b-yellow">Needs Inspection</span><span class="ai-pred high">91%</span></td>
                 <td><button class="btn btn-outline btn-sm" onclick="showScreen('schedule')">Schedule</button></td>
               </tr>
               <tr>
                 <td class="tdim">#2026-096</td>
-                <td><strong>Abena Frimpong</strong><br/><span class="tdim"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="abcac9cec5ca85cdebd2cac3c4c485c8c4c6">[email&#160;protected]</a></span></td>
-                <td><span class="tag">Agent</span></td>
-                <td>Feb 16</td>
+                <td><strong>Abena Frimpong</strong><br/><span class="tdim">abena@realty.gh</span></td>
+                <td><span class="tag">Agent</span><br/><span class="tdim">₵450</span></td>
+                <td><span class="pay-badge paid">Paid</span><br/><span class="tdim">PAY-096</span></td>
                 <td style="color:var(--success)">7/7 ✓</td>
-                <td><span class="badge b-green">Ready</span><span class="ai-pred high">88% Approve</span></td>
+                <td><span class="badge b-green">Ready</span><span class="ai-pred high">88%</span></td>
                 <td><button class="btn btn-outline btn-sm">Review</button></td>
               </tr>
               <tr>
                 <td class="tdim">#2026-097</td>
-                <td><strong>Emmanuel Adjei</strong><br/><span class="tdim"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="85e0e8e4abe4e1efe0ecc5e2e8e4ece9abe6eae8">[email&#160;protected]</a></span></td>
-                <td><span class="tag">Broker</span></td>
-                <td>Feb 17</td>
+                <td><strong>Emmanuel Adjei</strong><br/><span class="tdim">emmanuel@homes.gh</span></td>
+                <td><span class="tag">Broker</span><br/><span class="tdim">₵800</span></td>
+                <td><span class="pay-badge paid">Paid</span><br/><span class="tdim">PAY-097</span></td>
                 <td style="color:var(--success)">7/7 ✓</td>
-                <td><span class="badge b-green">Ready</span><span class="ai-pred high">86% Approve</span></td>
+                <td><span class="badge b-green">Ready</span><span class="ai-pred high">86%</span></td>
                 <td><button class="btn btn-outline btn-sm">Review</button></td>
               </tr>
-              <tr>
+              <tr class="unpaid">
                 <td class="tdim">#2026-098</td>
-                <td><strong>Akua Osei</strong><br/><span class="tdim"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="22434957430c4d51474b624d57564e4d4d490c414d4f">[email&#160;protected]</a></span></td>
-                <td><span class="tag">Agent</span></td>
-                <td>Feb 17</td>
+                <td><strong>Akua Osei</strong><br/><span class="tdim">akua@mail.gh</span></td>
+                <td><span class="tag">Agent</span><br/><span class="tdim">₵450</span></td>
+                <td><span class="pay-badge failed">Failed</span><br/><span class="ai-pred low" style="margin:0;margin-top:4px">Retry</span></td>
                 <td style="color:var(--warning)">5/7 ⚠</td>
-                <td><span class="badge b-yellow">Incomplete</span><span class="ai-pred low">Risk: 2 docs</span></td>
-                <td><button class="btn btn-sm" style="background:rgba(255,255,255,0.04);color:var(--text-dim)">Request Doc</button></td>
+                <td><span class="badge b-red">Payment Failed</span></td>
+                <td><button class="btn btn-sm" style="background:rgba(231,76,60,0.15);color:var(--danger)" onclick="openPaymentModal()">Retry</button></td>
               </tr>
               <tr>
                 <td class="tdim">#2026-099</td>
-                <td><strong>Kwame Boateng</strong><br/><span class="tdim"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="6c071b0d0109420e2c0b010d0500420f0301">[email&#160;protected]</a></span></td>
-                <td><span class="tag">Agent</span></td>
-                <td>Feb 18</td>
+                <td><strong>Kwame Boateng</strong><br/><span class="tdim">kwame@agent.gh</span></td>
+                <td><span class="tag">Agent</span><br/><span class="tdim">₵450</span></td>
+                <td><span class="pay-badge paid">Paid</span><br/><span class="tdim">PAY-099</span></td>
                 <td style="color:var(--success)">7/7 ✓</td>
-                <td><span class="badge b-green">Ready</span><span class="ai-pred high">90% Approve</span></td>
+                <td><span class="badge b-green">Ready</span><span class="ai-pred high">90%</span></td>
                 <td><button class="btn btn-outline btn-sm">Review</button></td>
               </tr>
               <tr>
                 <td class="tdim">#2026-100</td>
-                <td><strong>Summit Properties</strong><br/><span class="tdim"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="94fdfaf2fbd4e7e1f9f9fde0baf3fc">[email&#160;protected]</a></span></td>
-                <td><span class="tag">Firm</span></td>
-                <td>Feb 18</td>
+                <td><strong>Summit Properties</strong><br/><span class="tdim">info@summit.gh</span></td>
+                <td><span class="tag">Firm</span><br/><span class="tdim">₵2,500</span></td>
+                <td><span class="pay-badge paid">Paid</span><br/><span class="tdim">PAY-100</span></td>
                 <td style="color:var(--success)">7/7 ✓</td>
-                <td><span class="badge b-yellow">Needs Inspection</span><span class="ai-pred high">84% Approve</span></td>
+                <td><span class="badge b-yellow">Needs Inspection</span><span class="ai-pred high">84%</span></td>
                 <td><button class="btn btn-outline btn-sm" onclick="showScreen('schedule')">Schedule</button></td>
               </tr>
             </tbody>
@@ -461,7 +530,33 @@ textarea{min-height:100px;resize:vertical}
           <button class="btn btn-success btn-sm" onclick="openApproveModal()">✅ Approve</button>
         </div>
       </div>
-      
+
+      <!-- Payment Information -->
+      <div class="pay-info">
+        <div class="pay-info-header">
+          <div class="pay-info-title">💳 Payment Information <span class="pay-badge paid">Verified</span></div>
+          <div class="pay-amount">₵450.00</div>
+        </div>
+        <div class="pay-grid">
+          <div class="pay-item">
+            <div class="pay-item-label">Payment Reference</div>
+            <div class="pay-item-value">PAY-2026-001089</div>
+          </div>
+          <div class="pay-item">
+            <div class="pay-item-label">Payment Date</div>
+            <div class="pay-item-value">Feb 10, 2026 • 10:23 AM</div>
+          </div>
+          <div class="pay-item">
+            <div class="pay-item-label">Payment Method</div>
+            <div class="pay-item-value">Mobile Money (MTN)</div>
+          </div>
+          <div class="pay-item">
+            <div class="pay-item-label">Transaction ID</div>
+            <div class="pay-item-value">MTN-789456123</div>
+          </div>
+        </div>
+      </div>
+
       <!-- Applicant Info & Documents -->
       <div class="sg2">
         <div class="card">
@@ -764,8 +859,172 @@ textarea{min-height:100px;resize:vertical}
         </div>
       </div>
     </div>
-    
+
+    <!-- PAYMENT VERIFICATION -->
+    <div class="screen" id="screen-payments">
+      <div class="pg-hdr">
+        <div>
+          <h1>Payment Verification</h1>
+          <div class="sub">Verify pending application payments</div>
+        </div>
+      </div>
+
+      <!-- Payment Stats -->
+      <div class="sg4">
+        <div class="sc warn">
+          <div class="sc-lbl">Pending Verification</div>
+          <div class="sc-val">3</div>
+          <div class="sc-sub">Awaiting review</div>
+          <div class="sc-ico">⏳</div>
+        </div>
+        <div class="sc green">
+          <div class="sc-lbl">Verified Today</div>
+          <div class="sc-val">8</div>
+          <div class="sc-sub">₵12,400 total</div>
+          <div class="sc-ico">✅</div>
+        </div>
+        <div class="sc danger">
+          <div class="sc-lbl">Failed Payments</div>
+          <div class="sc-val">1</div>
+          <div class="sc-sub">Needs retry</div>
+          <div class="sc-ico">❌</div>
+        </div>
+        <div class="sc">
+          <div class="sc-lbl">Total Revenue</div>
+          <div class="sc-val">₵48.2K</div>
+          <div class="sc-sub">This month</div>
+          <div class="sc-ico">💰</div>
+        </div>
+      </div>
+
+      <!-- Pending Payments Table -->
+      <div class="card">
+        <div class="card-hdr">
+          <div class="card-title">Payments Awaiting Verification (3)</div>
+        </div>
+        <div class="tw">
+          <table>
+            <thead>
+              <tr>
+                <th>Ref #</th>
+                <th>Applicant</th>
+                <th>Type</th>
+                <th>Amount</th>
+                <th>Method</th>
+                <th>Submitted</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="tdim">#2026-090</td>
+                <td><strong>Ama Darko</strong></td>
+                <td><span class="tag">Broker</span></td>
+                <td class="tgold">₵800</td>
+                <td>Mobile Money</td>
+                <td>Feb 18, 11:42 AM</td>
+                <td><span class="pay-badge pending">Pending</span></td>
+                <td><button class="btn btn-outline btn-sm" onclick="openPaymentModal()">Verify</button></td>
+              </tr>
+              <tr>
+                <td class="tdim">#2026-094</td>
+                <td><strong>Yaw Mensah</strong></td>
+                <td><span class="tag">Agent</span></td>
+                <td class="tgold">₵450</td>
+                <td>Bank Transfer</td>
+                <td>Feb 18, 2:15 PM</td>
+                <td><span class="pay-badge pending">Pending</span></td>
+                <td><button class="btn btn-outline btn-sm" onclick="openPaymentModal()">Verify</button></td>
+              </tr>
+              <tr>
+                <td class="tdim">#2026-098</td>
+                <td><strong>Akua Osei</strong></td>
+                <td><span class="tag">Agent</span></td>
+                <td class="tgold">₵450</td>
+                <td>Card Payment</td>
+                <td>Feb 17, 4:30 PM</td>
+                <td><span class="pay-badge failed">Failed</span></td>
+                <td><button class="btn btn-sm" style="background:rgba(231,76,60,0.15);color:var(--danger)">Contact</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
   </main>
+</div>
+
+<!-- PAYMENT VERIFICATION MODAL -->
+<div class="modal-ov" id="paymentModal">
+  <div class="modal">
+    <div class="modal-hdr">
+      <div class="modal-title">Verify Payment</div>
+      <button class="modal-close" onclick="closeModal('paymentModal')">×</button>
+    </div>
+    <div id="paymentForm">
+      <div class="pay-info pending" style="margin-bottom:20px">
+        <div class="pay-info-header">
+          <div class="pay-info-title">💳 Payment Details</div>
+          <div class="pay-amount">₵800.00</div>
+        </div>
+        <div class="pay-grid">
+          <div class="pay-item">
+            <div class="pay-item-label">Applicant</div>
+            <div class="pay-item-value">Ama Darko</div>
+          </div>
+          <div class="pay-item">
+            <div class="pay-item-label">Application Type</div>
+            <div class="pay-item-value">Broker License</div>
+          </div>
+          <div class="pay-item">
+            <div class="pay-item-label">Payment Method</div>
+            <div class="pay-item-value">Mobile Money (MTN)</div>
+          </div>
+          <div class="pay-item">
+            <div class="pay-item-label">Transaction Ref</div>
+            <div class="pay-item-value">MTN-456789012</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:16px">
+        <div class="card-hdr">
+          <div class="card-title">Payment Proof</div>
+        </div>
+        <div style="background:rgba(255,255,255,0.03);border:1px dashed var(--border);border-radius:8px;padding:24px;text-align:center">
+          <div style="font-size:32px;margin-bottom:8px">🧾</div>
+          <div style="font-size:13px;color:var(--text)">MTN_Receipt_090.jpg</div>
+          <div class="tdim">Uploaded: Feb 18, 2026 11:42 AM</div>
+          <button class="btn btn-outline btn-sm" style="margin-top:12px">View Receipt</button>
+        </div>
+      </div>
+
+      <div class="fg mb3">
+        <label>Verification Notes</label>
+        <textarea placeholder="Add any notes about this payment verification..."></textarea>
+      </div>
+
+      <div style="display:flex;gap:12px">
+        <button class="btn btn-danger" style="flex:1" onclick="rejectPayment()">❌ Reject Payment</button>
+        <button class="btn btn-success" style="flex:1" onclick="verifyPayment()">✅ Verify Payment</button>
+      </div>
+    </div>
+    <div id="paymentSuccess" class="hide">
+      <div class="success-box">
+        <div class="success-icon">✅</div>
+        <div class="success-title">Payment Verified!</div>
+        <div class="success-text">
+          Payment of <strong>₵800</strong> for Ama Darko has been verified.<br/><br/>
+          ✓ Application moved to review queue<br/>
+          ✓ Confirmation sent to applicant<br/>
+          ✓ Payment logged in system<br/>
+        </div>
+      </div>
+      <button class="btn btn-gold" style="width:100%;margin-top:16px" onclick="closeModal('paymentModal')">Done</button>
+    </div>
+  </div>
 </div>
 
 <!-- APPROVE MODAL -->
@@ -1031,6 +1290,23 @@ function doReject() {
 function doSchedule() {
   document.getElementById('scheduleForm').classList.add('hide');
   document.getElementById('scheduleSuccess').classList.remove('hide');
+}
+
+// Payment Modal Functions
+function openPaymentModal() {
+  document.getElementById('paymentModal').classList.add('open');
+  document.getElementById('paymentForm').classList.remove('hide');
+  document.getElementById('paymentSuccess').classList.add('hide');
+}
+
+function verifyPayment() {
+  document.getElementById('paymentForm').classList.add('hide');
+  document.getElementById('paymentSuccess').classList.remove('hide');
+}
+
+function rejectPayment() {
+  alert('Payment rejected. Applicant will be notified to resubmit payment.');
+  closeModal('paymentModal');
 }
 
 // AI Charts initialization
