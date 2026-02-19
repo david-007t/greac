@@ -230,6 +230,11 @@ select option{background:var(--navy-mid);color:var(--text)}
         <div class="step-line"></div>
         <div class="step-item" data-step="3">
           <div class="step-num">3</div>
+          <span>Payment</span>
+        </div>
+        <div class="step-line"></div>
+        <div class="step-item" data-step="4">
+          <div class="step-num">4</div>
           <span>Review</span>
         </div>
       </div>
@@ -344,14 +349,90 @@ select option{background:var(--navy-mid);color:var(--text)}
         
         <div class="btn-row">
           <button class="btn btn-outline" onclick="goToRegStep(1)">← Back</button>
-          <button class="btn btn-gold" onclick="goToRegStep(3)">Continue to Review →</button>
+          <button class="btn btn-gold" onclick="goToRegStep(3)">Continue to Payment →</button>
         </div>
       </div>
-      
-      <!-- STEP 3: Review -->
+
+      <!-- STEP 3: Payment -->
       <div class="reg-step" id="regStep3">
-        <div style="font-size:14px;font-weight:600;color:var(--gold-light);margin-bottom:16px">Step 3: Review & Submit</div>
-        
+        <div style="font-size:14px;font-weight:600;color:var(--gold-light);margin-bottom:16px">Step 3: Application Payment</div>
+
+        <div style="background:rgba(212,160,23,0.1);border:1px solid var(--gold-border);padding:16px;border-radius:10px;margin-bottom:20px">
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <div>
+              <div style="font-size:13px;color:var(--text-dim);margin-bottom:4px">License Application Fee</div>
+              <div style="font-size:24px;font-weight:700;color:var(--gold-light)" id="paymentAmount">₵450</div>
+              <div style="font-size:11px;color:var(--text-dim);margin-top:2px" id="paymentLicenseType">Individual Agent License</div>
+            </div>
+            <div style="font-size:40px">💳</div>
+          </div>
+        </div>
+
+        <div style="font-size:12px;color:var(--text-dim);margin-bottom:16px;padding:12px;background:rgba(255,255,255,0.03);border-radius:8px">
+          <strong>💡 How to pay:</strong> Make payment via Mobile Money, Bank Transfer, or Card, then enter the transaction details below. Your payment will be verified by the REAC compliance team before license approval.
+        </div>
+
+        <div class="form-grid">
+          <div class="fg full">
+            <label>Payment Method <span style="color:var(--danger)">*</span></label>
+            <select id="regPaymentMethod" onchange="updatePaymentFields()">
+              <option value="">Select payment method...</option>
+              <option value="momo">Mobile Money (MTN, Vodafone, AirtelTigo)</option>
+              <option value="bank">Bank Transfer</option>
+              <option value="card">Card Payment (Visa/Mastercard)</option>
+            </select>
+          </div>
+
+          <div class="fg" id="paymentPhoneGroup" style="display:none">
+            <label>Mobile Money Number</label>
+            <input type="tel" id="regPaymentPhone" placeholder="+233 XX XXX XXXX"/>
+          </div>
+
+          <div class="fg" id="paymentBankGroup" style="display:none">
+            <label>Bank Name</label>
+            <input type="text" id="regPaymentBank" placeholder="e.g., GCB Bank, Ecobank"/>
+          </div>
+
+          <div class="fg full">
+            <label>Transaction ID / Reference Number <span style="color:var(--danger)">*</span></label>
+            <input type="text" id="regTransactionId" placeholder="Enter your payment transaction ID"/>
+          </div>
+
+          <div class="fg full">
+            <label>Payment Date <span style="color:var(--danger)">*</span></label>
+            <input type="date" id="regPaymentDate"/>
+          </div>
+        </div>
+
+        <div class="upload-item" style="margin-top:16px">
+          <div class="upload-label">Upload Payment Receipt/Proof <span class="required-badge">Required</span></div>
+          <div class="upload-zone" id="upload-receipt" onclick="simulateUpload('receipt', this)">
+            <div class="upload-icon">🧾</div>
+            <div class="upload-text">Click to upload payment receipt (PDF/JPG/PNG, max 5MB)</div>
+            <div class="upload-filename hide"></div>
+          </div>
+        </div>
+
+        <div style="background:rgba(39,174,96,0.1);border:1px solid rgba(39,174,96,0.3);padding:12px;border-radius:8px;margin-top:16px;font-size:12px;color:var(--text)">
+          <strong>✓ Payment Details:</strong>
+          <div style="margin-top:8px;display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:11px;color:var(--text-dim)">
+            <div><strong>Bank:</strong> GCB Bank Ltd</div>
+            <div><strong>Account:</strong> 1234567890</div>
+            <div><strong>Account Name:</strong> REAC Ghana</div>
+            <div><strong>Branch:</strong> Head Office, Accra</div>
+          </div>
+        </div>
+
+        <div class="btn-row" style="margin-top:20px">
+          <button class="btn btn-outline" onclick="goToRegStep(2)">← Back</button>
+          <button class="btn btn-gold" id="proceedToReviewBtn" onclick="goToRegStep(4)" disabled>Proceed to Review →</button>
+        </div>
+      </div>
+
+      <!-- STEP 4: Review -->
+      <div class="reg-step" id="regStep4">
+        <div style="font-size:14px;font-weight:600;color:var(--gold-light);margin-bottom:16px">Step 4: Review & Submit</div>
+
         <div style="background:rgba(255,255,255,0.03);padding:16px;border-radius:8px;margin-bottom:20px">
           <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:12px">Personal Information</div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:12px">
@@ -362,17 +443,29 @@ select option{background:var(--navy-mid);color:var(--text)}
             <div style="grid-column:span 2"><span style="color:var(--text-dim)">License Type:</span> <span id="reviewLicense">-</span></div>
           </div>
         </div>
-        
+
         <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:12px">Uploaded Documents</div>
         <div class="doc-checklist" id="docChecklist"></div>
-        
-        <div style="background:rgba(212,160,23,0.1);border:1px solid var(--gold-border);padding:14px;border-radius:8px;margin-bottom:20px;font-size:12px;color:var(--text)">
-          <strong>⚠️ Important:</strong> Your application will be reviewed by our compliance team. You will receive an email within 3-5 business days with the decision. Once approved, you can login and access your portal.
+
+        <div style="background:rgba(255,255,255,0.03);padding:16px;border-radius:8px;margin-bottom:20px">
+          <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:12px">Payment Information</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:12px">
+            <div><span style="color:var(--text-dim)">Payment Amount:</span> <span id="reviewPaymentAmount" class="tgold">-</span></div>
+            <div><span style="color:var(--text-dim)">Payment Method:</span> <span id="reviewPaymentMethod">-</span></div>
+            <div><span style="color:var(--text-dim)">Transaction ID:</span> <span id="reviewTransactionId">-</span></div>
+            <div><span style="color:var(--text-dim)">Payment Date:</span> <span id="reviewPaymentDate">-</span></div>
+            <div><span style="color:var(--text-dim)">Receipt:</span> <span id="reviewReceipt">-</span></div>
+            <div><span style="color:var(--text-dim)">Payment Status:</span> <span class="badge b-yellow">Pending Verification</span></div>
+          </div>
         </div>
-        
+
+        <div style="background:rgba(212,160,23,0.1);border:1px solid var(--gold-border);padding:14px;border-radius:8px;margin-bottom:20px;font-size:12px;color:var(--text)">
+          <strong>⚠️ Important:</strong> Your application and payment will be reviewed by our compliance team. Payment will be verified before license approval. You will receive an email within 3-5 business days with the decision.
+        </div>
+
         <div class="btn-row">
-          <button class="btn btn-outline" onclick="goToRegStep(2)">← Back</button>
-          <button class="btn btn-gold" onclick="submitRegistration()">Submit Application</button>
+          <button class="btn btn-outline" onclick="goToRegStep(3)">← Back</button>
+          <button class="btn btn-gold" onclick="submitRegistration()">Submit Application (Payment will be verified by admin)</button>
         </div>
       </div>
       
@@ -1927,6 +2020,7 @@ function showScreen(screenId) {
 .success-icon{font-size:56px;margin-bottom:16px}
 .success-title{font-size:22px;font-weight:600;color:var(--success);margin-bottom:12px;font-family:'Cormorant Garamond',serif}
 .success-text{font-size:14px;color:var(--text);line-height:1.7}
+.success-detail{font-size:13px;color:var(--text);line-height:1.8;text-align:left;background:rgba(255,255,255,0.03);padding:16px;border-radius:8px;margin-top:16px}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.5}}
 
 /* Registration styles */
@@ -1972,6 +2066,7 @@ select option{background:var(--navy-mid);color:var(--text)}
 .doc-name{flex:1;font-size:13px;color:var(--text)}
 .doc-status{font-size:11px;color:var(--text-dim)}
 .doc-item.uploaded .doc-status{color:var(--success);font-weight:500}
+.btn-row{display:flex;gap:12px;justify-content:space-between;margin-top:20px}
 
 
 /* ADMIN PORTAL CSS */
@@ -2221,8 +2316,51 @@ let uploadedDocs = {
   police: false,
   business: false,
   ssnit: false,
-  gra: false
+  gra: false,
+  receipt: false
 };
+
+// License fees by type
+const licenseFees = {
+  agent: { amount: '₵450', label: 'Individual Agent License' },
+  broker: { amount: '₵780', label: 'Individual Broker License' },
+  firm: { amount: '₵1,200', label: 'Firm / Corporate Brokerage License' }
+};
+
+// Payment method labels
+const paymentMethodLabels = {
+  momo: 'Mobile Money',
+  bank: 'Bank Transfer',
+  card: 'Card Payment'
+};
+
+function updatePaymentAmount() {
+  const licenseType = document.getElementById('regLicenseType').value;
+  const fee = licenseFees[licenseType] || licenseFees.agent;
+  document.getElementById('paymentAmount').textContent = fee.amount;
+  document.getElementById('paymentLicenseType').textContent = fee.label;
+}
+
+function updatePaymentFields() {
+  const method = document.getElementById('regPaymentMethod').value;
+  const phoneGroup = document.getElementById('paymentPhoneGroup');
+  const bankGroup = document.getElementById('paymentBankGroup');
+
+  phoneGroup.style.display = method === 'momo' ? 'flex' : 'none';
+  bankGroup.style.display = method === 'bank' ? 'flex' : 'none';
+
+  validatePaymentStep();
+}
+
+function validatePaymentStep() {
+  const method = document.getElementById('regPaymentMethod').value;
+  const transactionId = document.getElementById('regTransactionId').value;
+  const paymentDate = document.getElementById('regPaymentDate').value;
+  const receiptUploaded = uploadedDocs.receipt;
+
+  const isValid = method && transactionId && paymentDate && receiptUploaded;
+  document.getElementById('proceedToReviewBtn').disabled = !isValid;
+}
 
 function simulateUpload(docType, element) {
   uploadedDocs[docType] = true;
@@ -2231,28 +2369,40 @@ function simulateUpload(docType, element) {
   filenameDiv.textContent = '✓ ' + docType.toUpperCase() + '_certificate.pdf';
   filenameDiv.classList.remove('hide');
   element.querySelector('.upload-text').textContent = 'Uploaded successfully';
+
+  // Trigger payment validation if receipt was uploaded
+  if (docType === 'receipt') {
+    validatePaymentStep();
+  }
 }
 
 // Registration steps
 let currentRegStep = 1;
 
 function goToRegStep(step) {
+  // Step 3: Payment - update payment amount based on license type
   if (step === 3) {
-    // Populate all review fields
+    updatePaymentAmount();
+    validatePaymentStep();
+  }
+
+  // Step 4: Review - populate all review fields
+  if (step === 4) {
+    // Personal info
     document.getElementById('reviewName').textContent = (document.getElementById('regFirstName').value || 'John') + ' ' + (document.getElementById('regLastName').value || 'Doe');
     document.getElementById('reviewEmail').textContent = document.getElementById('regEmail').value || 'john@example.com';
     document.getElementById('reviewPhone').textContent = document.getElementById('regPhone').value || '+233 XX XXX XXXX';
     document.getElementById('reviewGhanaCard').textContent = document.getElementById('regGhanaCard').value || 'GHA-XXXXXXXXX-X';
-    
+
     const licenseType = document.getElementById('regLicenseType');
     document.getElementById('reviewLicense').textContent = licenseType.selectedIndex > 0 ? licenseType.options[licenseType.selectedIndex].text : 'Individual Agent';
-    
-    // Populate document checklist
+
+    // Populate document checklist (exclude receipt)
     const docNames = ['CV', 'Ghana Card', 'Professional Indemnity Cover', 'Police Report', 'Business Registration', 'SSNIT Clearance', 'GRA Tax Clearance'];
-    const docKeys = Object.keys(uploadedDocs);
+    const docKeys = ['cv', 'ghanacard', 'indemnity', 'police', 'business', 'ssnit', 'gra'];
     const checklist = document.getElementById('docChecklist');
     checklist.innerHTML = '';
-    
+
     docNames.forEach((name, idx) => {
       const uploaded = uploadedDocs[docKeys[idx]];
       checklist.innerHTML += `
@@ -2263,12 +2413,27 @@ function goToRegStep(step) {
         </div>
       `;
     });
+
+    // Populate payment info
+    const licenseVal = document.getElementById('regLicenseType').value;
+    const fee = licenseFees[licenseVal] || licenseFees.agent;
+    document.getElementById('reviewPaymentAmount').textContent = fee.amount;
+
+    const paymentMethod = document.getElementById('regPaymentMethod').value;
+    document.getElementById('reviewPaymentMethod').textContent = paymentMethodLabels[paymentMethod] || '-';
+
+    document.getElementById('reviewTransactionId').textContent = document.getElementById('regTransactionId').value || '-';
+
+    const paymentDate = document.getElementById('regPaymentDate').value;
+    document.getElementById('reviewPaymentDate').textContent = paymentDate ? new Date(paymentDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '-';
+
+    document.getElementById('reviewReceipt').textContent = uploadedDocs.receipt ? '✓ Uploaded' : 'Not uploaded';
   }
-  
+
   document.querySelectorAll('.reg-step').forEach(s => s.classList.remove('active'));
   document.getElementById('regStep' + step).classList.add('active');
   currentRegStep = step;
-  
+
   // Update progress
   document.querySelectorAll('.step-item').forEach((item, idx) => {
     const stepNum = idx + 1;
@@ -2277,7 +2442,7 @@ function goToRegStep(step) {
     if (line && line.classList.contains('step-line')) {
       line.classList.remove('done');
     }
-    
+
     if (stepNum < step) {
       item.classList.add('done');
       item.querySelector('.step-num').textContent = '✓';
@@ -2324,6 +2489,26 @@ function showScreen(screenId) {
 
 // Chart.js initialization with AI Forecasting
 document.addEventListener('DOMContentLoaded', function() {
+  // Add payment field validation listeners
+  const paymentFields = ['regPaymentMethod', 'regTransactionId', 'regPaymentDate'];
+  paymentFields.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.addEventListener('input', validatePaymentStep);
+      el.addEventListener('change', validatePaymentStep);
+    }
+  });
+
+  // Update payment amount when license type changes
+  const licenseTypeSelect = document.getElementById('regLicenseType');
+  if (licenseTypeSelect) {
+    licenseTypeSelect.addEventListener('change', function() {
+      if (currentRegStep === 3) {
+        updatePaymentAmount();
+      }
+    });
+  }
+
   // Common chart options
   Chart.defaults.color = '#6b8db5';
   Chart.defaults.borderColor = 'rgba(255,255,255,0.07)';
