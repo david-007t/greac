@@ -1716,8 +1716,57 @@ select option{background:var(--navy-mid);color:var(--text)}
           </div>
         </div>
       </div>
+
+      <!-- AI Forecast Charts -->
+      <div class="sg2">
+        <div class="card">
+          <div class="card-hdr">
+            <div class="card-title">Market Demand Forecast <span class="ai-badge">AI Predicted</span></div>
+          </div>
+          <div class="chart-container tall">
+            <canvas id="marketDemandChart"></canvas>
+          </div>
+          <div class="forecast-legend">
+            <span class="actual">Actual (2025)</span>
+            <span class="forecast">AI Forecast (2026)</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-hdr">
+            <div class="card-title">Price Index Projection <span class="ai-badge">AI Predicted</span></div>
+          </div>
+          <div class="chart-container tall">
+            <canvas id="priceIndexChart"></canvas>
+          </div>
+          <div class="forecast-legend">
+            <span class="actual">Actual (2025)</span>
+            <span class="forecast">AI Forecast (2026)</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="sg2">
+        <div class="card">
+          <div class="card-hdr">
+            <div class="card-title">Competitor Market Share <span class="ai-badge">AI Predicted</span></div>
+          </div>
+          <div class="chart-container tall">
+            <canvas id="competitorChart"></canvas>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-hdr">
+            <div class="card-title">Regional Growth Forecast <span class="ai-badge">AI Predicted</span></div>
+          </div>
+          <div class="chart-container tall">
+            <canvas id="regionalGrowthChart"></canvas>
+          </div>
+        </div>
+      </div>
     </div>
-    
+
     <!-- COMPLIANCE OVERVIEW -->
     <div class="screen" id="screen-compliance">
       <div class="pg-hdr">
@@ -1999,6 +2048,16 @@ body{font-family:'Outfit',sans-serif;background:var(--navy);color:var(--text);mi
 /* Charts */
 .chart-container{height:240px;background:rgba(255,255,255,0.02);border-radius:10px;padding:16px;position:relative}
 .chart-container canvas{max-height:100%}
+.chart-container.tall{height:280px}
+
+/* AI Forecast Indicators */
+.ai-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:4px;font-size:10px;font-weight:600;background:linear-gradient(135deg,rgba(52,152,219,0.2),rgba(155,89,182,0.2));color:#5dade2;border:1px solid rgba(52,152,219,0.3)}
+.ai-badge::before{content:'🤖';font-size:10px}
+.forecast-legend{display:flex;align-items:center;gap:16px;margin-top:12px;padding-top:12px;border-top:1px solid var(--border);font-size:11px;color:var(--text-dim)}
+.forecast-legend .actual{display:flex;align-items:center;gap:6px}
+.forecast-legend .actual::before{content:'';width:20px;height:3px;background:var(--gold);border-radius:2px}
+.forecast-legend .forecast{display:flex;align-items:center;gap:6px}
+.forecast-legend .forecast::before{content:'';width:20px;height:3px;background:var(--gold);border-radius:2px;border:1px dashed var(--gold);background:transparent}
 
 /* Buttons */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:11px 20px;border-radius:8px;border:none;font-family:'Outfit',sans-serif;font-size:13px;font-weight:500;cursor:pointer;transition:all 0.2s}
@@ -2263,7 +2322,7 @@ function showScreen(screenId) {
   document.getElementById('screen-' + screenId).classList.add('active');
 }
 
-// Chart.js initialization
+// Chart.js initialization with AI Forecasting
 document.addEventListener('DOMContentLoaded', function() {
   // Common chart options
   Chart.defaults.color = '#6b8db5';
@@ -2272,17 +2331,19 @@ document.addEventListener('DOMContentLoaded', function() {
   const goldColor = '#d4a017';
   const goldLight = '#f0c040';
   const navyCard = '#142a55';
+  const aiPurple = '#9b59b6';
+  const aiBlue = '#3498db';
 
-  // 1. License Registrations Trend (Line Chart)
+  // 1. License Registrations Trend with AI Forecast
   const regCtx = document.getElementById('registrationsTrendChart');
   if (regCtx) {
     new Chart(regCtx, {
       type: 'line',
       data: {
-        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+        labels: ['Jan \'25', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Jan \'26', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
         datasets: [{
-          label: 'Registrations',
-          data: [52, 58, 64, 71, 76, 82, 88, 94, 85, 79, 83, 89],
+          label: 'Actual',
+          data: [52, 58, 64, 71, 76, 82, 88, 94, 85, 79, 83, 89, null, null, null, null, null, null],
           borderColor: goldColor,
           backgroundColor: 'rgba(212,160,23,0.1)',
           fill: true,
@@ -2291,30 +2352,47 @@ document.addEventListener('DOMContentLoaded', function() {
           pointBorderColor: goldColor,
           pointRadius: 4,
           pointHoverRadius: 6
+        }, {
+          label: 'AI Forecast',
+          data: [null, null, null, null, null, null, null, null, null, null, null, 89, 95, 102, 110, 118, 125, 132],
+          borderColor: aiPurple,
+          backgroundColor: 'rgba(155,89,182,0.1)',
+          borderDash: [6, 4],
+          fill: true,
+          tension: 0.4,
+          pointBackgroundColor: aiPurple,
+          pointBorderColor: aiPurple,
+          pointRadius: 4,
+          pointHoverRadius: 6,
+          pointStyle: 'triangle'
         }]
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
-          legend: { display: false },
+          legend: {
+            display: true,
+            position: 'top',
+            labels: { usePointStyle: true, padding: 15, font: { size: 10 } }
+          },
           tooltip: {
             backgroundColor: navyCard,
             titleColor: '#fff',
             bodyColor: '#dce8f5',
             borderColor: goldColor,
-            borderWidth: 1
+            borderWidth: 1,
+            callbacks: {
+              label: function(ctx) {
+                const prefix = ctx.datasetIndex === 1 ? '🤖 AI: ' : '';
+                return prefix + ctx.raw + ' registrations';
+              }
+            }
           }
         },
         scales: {
-          y: {
-            beginAtZero: false,
-            min: 40,
-            grid: { color: 'rgba(255,255,255,0.05)' }
-          },
-          x: {
-            grid: { display: false }
-          }
+          y: { beginAtZero: false, min: 40, grid: { color: 'rgba(255,255,255,0.05)' } },
+          x: { grid: { display: false } }
         }
       }
     });
@@ -2329,7 +2407,7 @@ document.addEventListener('DOMContentLoaded', function() {
         labels: ['Agent Licenses', 'Broker Licenses', 'Firm Licenses'],
         datasets: [{
           data: [50, 32.5, 17.5],
-          backgroundColor: [goldColor, '#27ae60', '#3498db'],
+          backgroundColor: [goldColor, '#27ae60', aiBlue],
           borderColor: navyCard,
           borderWidth: 3,
           hoverOffset: 8
@@ -2342,12 +2420,7 @@ document.addEventListener('DOMContentLoaded', function() {
         plugins: {
           legend: {
             position: 'right',
-            labels: {
-              padding: 15,
-              usePointStyle: true,
-              pointStyle: 'circle',
-              font: { size: 11 }
-            }
+            labels: { padding: 15, usePointStyle: true, pointStyle: 'circle', font: { size: 11 } }
           },
           tooltip: {
             backgroundColor: navyCard,
@@ -2355,27 +2428,23 @@ document.addEventListener('DOMContentLoaded', function() {
             bodyColor: '#dce8f5',
             borderColor: goldColor,
             borderWidth: 1,
-            callbacks: {
-              label: function(ctx) {
-                return ctx.label + ': ' + ctx.raw + '%';
-              }
-            }
+            callbacks: { label: function(ctx) { return ctx.label + ': ' + ctx.raw + '%'; } }
           }
         }
       }
     });
   }
 
-  // 3. Monthly Revenue Trend (Line Chart)
+  // 3. Monthly Revenue Trend with AI Forecast
   const monthRevCtx = document.getElementById('monthlyRevenueChart');
   if (monthRevCtx) {
     new Chart(monthRevCtx, {
       type: 'line',
       data: {
-        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+        labels: ['Jan \'25', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Jan \'26', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
         datasets: [{
-          label: 'Revenue (₵K)',
-          data: [180, 195, 580, 220, 210, 240, 255, 230, 245, 260, 275, 310],
+          label: 'Actual Revenue',
+          data: [180, 195, 580, 220, 210, 240, 255, 230, 245, 260, 275, 310, null, null, null, null, null, null],
           borderColor: '#27ae60',
           backgroundColor: 'rgba(39,174,96,0.1)',
           fill: true,
@@ -2384,13 +2453,30 @@ document.addEventListener('DOMContentLoaded', function() {
           pointBorderColor: '#27ae60',
           pointRadius: 4,
           pointHoverRadius: 6
+        }, {
+          label: 'AI Forecast',
+          data: [null, null, null, null, null, null, null, null, null, null, null, 310, 285, 320, 620, 290, 305, 340],
+          borderColor: aiPurple,
+          backgroundColor: 'rgba(155,89,182,0.1)',
+          borderDash: [6, 4],
+          fill: true,
+          tension: 0.4,
+          pointBackgroundColor: aiPurple,
+          pointBorderColor: aiPurple,
+          pointRadius: 4,
+          pointHoverRadius: 6,
+          pointStyle: 'triangle'
         }]
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
-          legend: { display: false },
+          legend: {
+            display: true,
+            position: 'top',
+            labels: { usePointStyle: true, padding: 15, font: { size: 10 } }
+          },
           tooltip: {
             backgroundColor: navyCard,
             titleColor: '#fff',
@@ -2399,7 +2485,8 @@ document.addEventListener('DOMContentLoaded', function() {
             borderWidth: 1,
             callbacks: {
               label: function(ctx) {
-                return '₵' + ctx.raw + 'K';
+                const prefix = ctx.datasetIndex === 1 ? '🤖 AI: ' : '';
+                return prefix + '₵' + ctx.raw + 'K';
               }
             }
           }
@@ -2409,15 +2496,9 @@ document.addEventListener('DOMContentLoaded', function() {
             beginAtZero: false,
             min: 100,
             grid: { color: 'rgba(255,255,255,0.05)' },
-            ticks: {
-              callback: function(value) {
-                return '₵' + value + 'K';
-              }
-            }
+            ticks: { callback: function(value) { return '₵' + value + 'K'; } }
           },
-          x: {
-            grid: { display: false }
-          }
+          x: { grid: { display: false } }
         }
       }
     });
@@ -2432,7 +2513,7 @@ document.addEventListener('DOMContentLoaded', function() {
         labels: ['Residential (328)', 'Commercial (106)', 'Land (48)'],
         datasets: [{
           data: [68, 22, 10],
-          backgroundColor: [goldColor, '#9b59b6', '#e67e22'],
+          backgroundColor: [goldColor, aiPurple, '#e67e22'],
           borderColor: navyCard,
           borderWidth: 3,
           hoverOffset: 8
@@ -2445,12 +2526,7 @@ document.addEventListener('DOMContentLoaded', function() {
         plugins: {
           legend: {
             position: 'right',
-            labels: {
-              padding: 15,
-              usePointStyle: true,
-              pointStyle: 'circle',
-              font: { size: 11 }
-            }
+            labels: { padding: 15, usePointStyle: true, pointStyle: 'circle', font: { size: 11 } }
           },
           tooltip: {
             backgroundColor: navyCard,
@@ -2458,12 +2534,211 @@ document.addEventListener('DOMContentLoaded', function() {
             bodyColor: '#dce8f5',
             borderColor: goldColor,
             borderWidth: 1,
-            callbacks: {
-              label: function(ctx) {
-                return ctx.label + ': ' + ctx.raw + '%';
-              }
-            }
+            callbacks: { label: function(ctx) { return ctx.label + ': ' + ctx.raw + '%'; } }
           }
+        }
+      }
+    });
+  }
+
+  // 5. Market Demand Forecast (AI Chart)
+  const demandCtx = document.getElementById('marketDemandChart');
+  if (demandCtx) {
+    new Chart(demandCtx, {
+      type: 'line',
+      data: {
+        labels: ['Jul \'25', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Jan \'26', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+        datasets: [{
+          label: 'Property Demand Index',
+          data: [78, 82, 85, 88, 84, 90, null, null, null, null, null, null],
+          borderColor: goldColor,
+          backgroundColor: 'rgba(212,160,23,0.15)',
+          fill: true,
+          tension: 0.4,
+          pointRadius: 5
+        }, {
+          label: 'AI Prediction',
+          data: [null, null, null, null, null, 90, 94, 98, 105, 112, 118, 124],
+          borderColor: aiPurple,
+          backgroundColor: 'rgba(155,89,182,0.15)',
+          borderDash: [6, 4],
+          fill: true,
+          tension: 0.4,
+          pointStyle: 'triangle',
+          pointRadius: 5
+        }, {
+          label: 'Confidence Band Upper',
+          data: [null, null, null, null, null, 90, 100, 108, 118, 128, 138, 148],
+          borderColor: 'transparent',
+          backgroundColor: 'rgba(155,89,182,0.05)',
+          fill: '+1',
+          tension: 0.4,
+          pointRadius: 0
+        }, {
+          label: 'Confidence Band Lower',
+          data: [null, null, null, null, null, 90, 88, 88, 92, 96, 98, 100],
+          borderColor: 'rgba(155,89,182,0.3)',
+          borderDash: [2, 2],
+          fill: false,
+          tension: 0.4,
+          pointRadius: 0
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: true,
+            position: 'top',
+            labels: { usePointStyle: true, padding: 12, font: { size: 10 }, filter: function(item) { return !item.text.includes('Confidence'); } }
+          },
+          tooltip: {
+            backgroundColor: navyCard,
+            titleColor: '#fff',
+            bodyColor: '#dce8f5',
+            borderColor: aiPurple,
+            borderWidth: 1,
+            filter: function(item) { return !item.dataset.label.includes('Confidence'); }
+          }
+        },
+        scales: {
+          y: { beginAtZero: false, min: 70, max: 150, grid: { color: 'rgba(255,255,255,0.05)' } },
+          x: { grid: { display: false } }
+        }
+      }
+    });
+  }
+
+  // 6. Price Index Projection (AI Chart)
+  const priceCtx = document.getElementById('priceIndexChart');
+  if (priceCtx) {
+    new Chart(priceCtx, {
+      type: 'line',
+      data: {
+        labels: ['Jul \'25', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Jan \'26', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+        datasets: [{
+          label: 'Avg Price (₵K)',
+          data: [820, 835, 850, 865, 875, 890, null, null, null, null, null, null],
+          borderColor: '#27ae60',
+          backgroundColor: 'rgba(39,174,96,0.15)',
+          fill: true,
+          tension: 0.4,
+          pointRadius: 5
+        }, {
+          label: 'AI Prediction',
+          data: [null, null, null, null, null, 890, 905, 920, 945, 970, 990, 1020],
+          borderColor: aiPurple,
+          backgroundColor: 'rgba(155,89,182,0.15)',
+          borderDash: [6, 4],
+          fill: true,
+          tension: 0.4,
+          pointStyle: 'triangle',
+          pointRadius: 5
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: true,
+            position: 'top',
+            labels: { usePointStyle: true, padding: 12, font: { size: 10 } }
+          },
+          tooltip: {
+            backgroundColor: navyCard,
+            borderColor: '#27ae60',
+            borderWidth: 1,
+            callbacks: { label: function(ctx) { return (ctx.datasetIndex === 1 ? '🤖 AI: ' : '') + '₵' + ctx.raw + 'K'; } }
+          }
+        },
+        scales: {
+          y: { beginAtZero: false, min: 750, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { callback: function(v) { return '₵' + v + 'K'; } } },
+          x: { grid: { display: false } }
+        }
+      }
+    });
+  }
+
+  // 7. Competitor Market Share (Bar Chart)
+  const compCtx = document.getElementById('competitorChart');
+  if (compCtx) {
+    new Chart(compCtx, {
+      type: 'bar',
+      data: {
+        labels: ['Devtraco', 'Trasacco', 'Regimanuel', 'Lakeside', 'Others'],
+        datasets: [{
+          label: 'Current Share %',
+          data: [18, 15, 12, 10, 45],
+          backgroundColor: goldColor,
+          borderRadius: 4
+        }, {
+          label: 'AI Predicted (Jun \'26)',
+          data: [22, 17, 14, 8, 39],
+          backgroundColor: aiPurple,
+          borderRadius: 4
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: true,
+            position: 'top',
+            labels: { usePointStyle: true, padding: 12, font: { size: 10 } }
+          },
+          tooltip: {
+            backgroundColor: navyCard,
+            callbacks: { label: function(ctx) { return (ctx.datasetIndex === 1 ? '🤖 ' : '') + ctx.dataset.label + ': ' + ctx.raw + '%'; } }
+          }
+        },
+        scales: {
+          y: { beginAtZero: true, max: 50, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { callback: function(v) { return v + '%'; } } },
+          x: { grid: { display: false } }
+        }
+      }
+    });
+  }
+
+  // 8. Regional Growth Forecast (Bar Chart)
+  const regionCtx = document.getElementById('regionalGrowthChart');
+  if (regionCtx) {
+    new Chart(regionCtx, {
+      type: 'bar',
+      data: {
+        labels: ['Greater Accra', 'Ashanti', 'Western', 'Eastern', 'Central'],
+        datasets: [{
+          label: 'Current Growth %',
+          data: [18, 14, 8, 5, 4],
+          backgroundColor: '#27ae60',
+          borderRadius: 4
+        }, {
+          label: 'AI Predicted Growth %',
+          data: [24, 19, 12, 9, 7],
+          backgroundColor: aiPurple,
+          borderRadius: 4
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        indexAxis: 'y',
+        plugins: {
+          legend: {
+            display: true,
+            position: 'top',
+            labels: { usePointStyle: true, padding: 12, font: { size: 10 } }
+          },
+          tooltip: {
+            backgroundColor: navyCard,
+            callbacks: { label: function(ctx) { return (ctx.datasetIndex === 1 ? '🤖 ' : '') + ctx.dataset.label + ': ' + ctx.raw + '%'; } }
+          }
+        },
+        scales: {
+          x: { beginAtZero: true, max: 30, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { callback: function(v) { return v + '%'; } } },
+          y: { grid: { display: false } }
         }
       }
     });
