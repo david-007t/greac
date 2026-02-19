@@ -909,4 +909,48 @@ function updateInspectionSection() {
   });
   
   // Show section content (in real app would show different sections)
-  alert('Section ' + currentSection + ' loaded. (In real app, different form sectio
+  alert('Section ' + currentSection + ' loaded.');
+}
+
+// Modal functions
+function openApproveModal() {
+  document.getElementById('approveModal').classList.add('open');
+  document.getElementById('approveForm').classList.remove('hide');
+  document.getElementById('approveSuccess').classList.add('hide');
+}
+
+function openRejectModal() {
+  document.getElementById('rejectModal').classList.add('open');
+  document.getElementById('rejectForm').classList.remove('hide');
+  document.getElementById('rejectSuccess').classList.add('hide');
+}
+
+function openScheduleModal() {
+  document.getElementById('scheduleModal').classList.add('open');
+  document.getElementById('scheduleForm').classList.remove('hide');
+  document.getElementById('scheduleSuccess').classList.add('hide');
+}
+
+function closeModal(modalId) {
+  document.getElementById(modalId).classList.remove('open');
+}
+
+function doApprove() {
+  document.getElementById('approveForm').classList.add('hide');
+  document.getElementById('approveSuccess').classList.remove('hide');
+}
+
+function doReject() {
+  const reason = document.getElementById('rejectReason').value || 'Not specified';
+  document.getElementById('rejectionReasonText').textContent = reason;
+  document.getElementById('rejectForm').classList.add('hide');
+  document.getElementById('rejectSuccess').classList.remove('hide');
+}
+
+function doSchedule() {
+  document.getElementById('scheduleForm').classList.add('hide');
+  document.getElementById('scheduleSuccess').classList.remove('hide');
+}
+</script>
+</body>
+</html>
