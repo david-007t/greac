@@ -848,8 +848,15 @@ textarea{min-height:100px;resize:vertical}
 let currentSection = 3;
 
 function showScreen(screenId) {
-  document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
-  event.target.classList.add('active');
+  // Update sidebar active state
+  document.querySelectorAll('.nav-item').forEach(item => {
+    item.classList.remove('active');
+    // Find the nav-item that corresponds to this screen
+    if (item.getAttribute('onclick') && item.getAttribute('onclick').includes("'" + screenId + "'")) {
+      item.classList.add('active');
+    }
+  });
+  // Switch screen
   document.querySelectorAll('.screen').forEach(screen => screen.classList.remove('active'));
   document.getElementById('screen-' + screenId).classList.add('active');
 }
